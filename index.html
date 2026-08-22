@@ -17,6 +17,12 @@
     h1 { font-size: 22px; margin-bottom: 10px; color: #1a365d; }
     button.action-btn { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; background: #3182ce; color: white; border: none; border-radius: 6px; margin: 10px 5px; transition: 0.2s; }
     button.action-btn:hover { background: #2b6cb0; }
+    
+    /* Speed Control Styling */
+    .audio-control-area { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
+    .speed-select { padding: 10px; font-size: 15px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; color: #333; cursor: pointer; }
+    .speed-select:focus { outline: none; border-color: #3182ce; }
+
     input[type="text"] { padding: 12px; font-size: 18px; width: 85%; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 6px; text-align: center; }
     input[type="text"]:focus { outline: none; border-color: #3182ce; }
     .hidden { display: none; }
@@ -50,8 +56,18 @@
     <!-- Play Screen -->
     <div id="play-screen" class="hidden">
         <div class="progress" id="progress-text">Question 1 / 5</div>
-        <button class="action-btn" onclick="playAudio()">🔊 Listen Again</button>
-        <br>
+        
+        <!-- 音声＆スピード調整エリア -->
+        <div class="audio-control-area">
+            <button class="action-btn" style="margin: 0;" onclick="playAudio()">🔊 Listen Again</button>
+            <select id="speed-select" class="speed-select">
+                <option value="0.75">0.75x (Slow)</option>
+                <option value="1.0" selected>1.0x (Normal)</option>
+                <option value="1.25">1.25x (Fast)</option>
+                <option value="1.5">1.5x (Very Fast)</option>
+            </select>
+        </div>
+
         <input type="text" id="answer-input" onkeypress="handleEnter(event)">
         <div class="note" id="mode-note">* Include a space between first and last name</div>
         <br>
@@ -215,7 +231,10 @@
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = 'en-GB'; 
-            utterance.rate = 1.0; 
+            
+            // ★ プルダウンで選択されたスピード（数値）をここに反映させる
+            const selectedSpeed = document.getElementById("speed-select").value;
+            utterance.rate = parseFloat(selectedSpeed); 
             
             window.speechSynthesis.speak(utterance);
         } else {
