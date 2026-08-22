@@ -45,8 +45,7 @@ const modes = {
                     const h = Math.floor(num / 100);
                     const rem = num % 100;
                     if (rem === 0) return `${ones[h]} hundred`;
-                    const useAnd = Math.random() < 0.5;
-                    return `${ones[h]} hundred${useAnd ? ' and ' : ' '}${sayNumber(rem)}`;
+                    return `${ones[h]} hundred ${sayNumber(rem)}`;
                 }
                 if (num < 1000000) {
                     const th = Math.floor(num / 1000);
