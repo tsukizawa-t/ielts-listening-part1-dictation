@@ -164,6 +164,20 @@ function getBritishVoice() {
 
 function playAudio() {
     if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices();
+        const englishVoice = getBritishVoice();
+
+        if (!voices.length || !englishVoice) {
+            const feedback = document.getElementById("feedback-text");
+            if (feedback) {
+                feedback.innerText = "⚠️ No English voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.";
+                feedback.className = "feedback incorrect";
+            } else {
+                alert("No English TTS voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.");
+            }
+            return;
+        }
+
         window.speechSynthesis.cancel(); 
         
         const textToSpeak = modes[currentMode].getAudioText(currentQObj);
