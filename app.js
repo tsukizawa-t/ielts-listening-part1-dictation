@@ -133,9 +133,9 @@ function loadQuestion() {
     document.getElementById("feedback-text").innerText = "";
     document.getElementById("submit-btn").classList.remove("hidden");
     document.getElementById("next-btn").classList.add("hidden");
+
+    playAudio();
     inputEl.focus();
-    
-    setTimeout(playAudio, 500);
 }
 
 function getBritishVoice() {
