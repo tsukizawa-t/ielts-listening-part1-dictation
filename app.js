@@ -34,7 +34,7 @@ const modes = {
         title: "Post Code Dictation",
         desc: "A UK Post Code will be announced.<br>Type the correct post code! (5 Questions)",
         placeholder: "e.g. SW1A 1AA",
-        note: "* Space in the middle is optional",
+        note: "",
         generate: () => {
             let pc = postcodes[Math.floor(Math.random() * postcodes.length)];
             return { display: pc, answer: pc.toLowerCase() };
@@ -138,6 +138,30 @@ function loadQuestion() {
     setTimeout(playAudio, 500);
 }
 
+function getBritishVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const britishCandidates = [
+        /en-gb|en_uk|english.*united kingdom|united kingdom.*english|british/i,
+        /david|hazel|susan|jenny|rachel|george|serena|heather|martin/i,
+        /en-us|en-au|en-ca/i
+    ];
+
+    const priorityVoice = voices.find(voice => {
+        const name = (voice.name || '').toLowerCase();
+        const lang = (voice.lang || '').toLowerCase();
+        return britishCandidates[0].test(lang) || britishCandidates[0].test(name);
+    });
+
+    if (priorityVoice) return priorityVoice;
+
+    const englishVoice = voices.find(voice => {
+        const lang = (voice.lang || '').toLowerCase();
+        return lang.startsWith('en') || /english/.test((voice.name || '').toLowerCase());
+    });
+
+    return englishVoice || null;
+}
+
 function playAudio() {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel(); 
@@ -145,10 +169,17 @@ function playAudio() {
         const textToSpeak = modes[currentMode].getAudioText(currentQObj);
         
         const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'en-GB'; 
+        utterance.lang = 'en-GB';
+        const britishVoice = getBritishVoice();
+        if (britishVoice) {
+            utterance.voice = britishVoice;
+        }
         
-        const selectedSpeed = document.getElementById("speed-select").value;
-        utterance.rate = parseFloat(selectedSpeed); 
+        const speedInput = document.getElementById("speed-range");
+        const selectedSpeed = speedInput ? speedInput.value : "1.5";
+        utterance.rate = parseFloat(selectedSpeed);
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
         
         window.speechSynthesis.speak(utterance);
     } else {
@@ -165,7 +196,9 @@ function checkAnswer() {
     if (input === "") return; 
 
     const normalizedInput = modes[currentMode].normalizeInput(input);
-    const correctAnswer = currentQObj.answer;
+    const correctAnswer = currentMode === 'postcode'
+        ? modes[currentMode].normalizeInput(currentQObj.answer)
+        : currentQObj.answer;
     
     const feedback = document.getElementById("feedback-text");
 
