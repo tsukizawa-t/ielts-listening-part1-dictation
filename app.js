@@ -2,7 +2,7 @@
 const modes = {
     name: {
         title: "Name Spelling Test",
-        desc: "A random full name will be announced and spelled out.<br>Type the correct spelling! (5 Questions)",
+        desc: "A random full name will be announced and spelled out.<br>Type the correct spelling! (10 Questions)",
         placeholder: "First Last",
         note: "* Include a space between first and last name",
         generate: () => {
@@ -20,7 +20,7 @@ const modes = {
     },
     number: {
         title: "Number Dictation",
-        desc: "A random number (10 - 999,999) will be announced.<br>Type the exact number! (5 Questions)",
+        desc: "A random number (10 - 999,999) will be announced.<br>Type the exact number! (10 Questions)",
         placeholder: "e.g. 12345",
         note: "* Commas are optional (1234 or 1,234)",
         generate: () => {
@@ -62,7 +62,7 @@ const modes = {
     },
     postcode: {
         title: "Post Code Dictation",
-        desc: "A UK Post Code will be announced.<br>Type the correct post code! (5 Questions)",
+        desc: "A UK Post Code will be announced.<br>Type the correct post code! (10 Questions)",
         placeholder: "e.g. SW1A 1AA",
         note: "",
         generate: () => {
@@ -79,7 +79,7 @@ const modes = {
         },
     phone: {
         title: "Phone Number Dictation",
-        desc: "A UK phone number will be announced.<br>Type the correct number! (5 Questions)",
+        desc: "A UK phone number will be announced.<br>Type the correct number! (10 Questions)",
         placeholder: "e.g. 07700 900077",
         note: "* Spaces in numbers are optional",
         generate: () => {
@@ -91,7 +91,7 @@ const modes = {
     },
     address: {
         title: "Address & Street Name Dictation",
-        desc: "A street address will be announced and the street name spelled out.<br>Type the full address! (5 Questions)",
+        desc: "A street address will be announced and the street name spelled out.<br>Type the full address! (10 Questions)",
         placeholder: "e.g. 15 Sparrow Lane",
         note: "* e.g. Number followed by street name",
         generate: () => {
