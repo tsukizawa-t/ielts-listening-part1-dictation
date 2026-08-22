@@ -45,13 +45,15 @@ const modes = {
                     const h = Math.floor(num / 100);
                     const rem = num % 100;
                     if (rem === 0) return `${ones[h]} hundred`;
-                    return `${ones[h]} hundred ${sayNumber(rem)}`;
+                    const useAnd = Math.random() < 0.5;
+                    return `${ones[h]} hundred${useAnd ? ' and ' : ' '}${sayNumber(rem)}`;
                 }
                 if (num < 1000000) {
                     const th = Math.floor(num / 1000);
                     const rem = num % 1000;
                     if (rem === 0) return `${sayNumber(th)} thousand`;
-                    return `${sayNumber(th)} thousand ${sayNumber(rem)}`;
+                    const useAnd = Math.random() < 0.5;
+                    return `${sayNumber(th)} thousand${useAnd ? ' and ' : ' '}${sayNumber(rem)}`;
                 }
                 return String(num);
             }
