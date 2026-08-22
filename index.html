@@ -101,6 +101,7 @@
                 return { display: `${f} ${l}`, answer: `${f} ${l}`.toLowerCase() };
             },
             getAudioText: (q) => {
+                // 全体＋スペルアウト（本番仕様）
                 const parts = q.display.split(' ');
                 const spelledFirst = parts[0].toUpperCase().split('').join(', ');
                 const spelledLast = parts[1].toUpperCase().split('').join(', ');
@@ -117,39 +118,31 @@
                 const num = Math.floor(Math.random() * 999990) + 10;
                 return { display: num.toString(), answer: num.toString() };
             },
-            getAudioText: (q) => `, , , , ${q.display}`,
+            getAudioText: (q) => `, , , , ${q.display}`, // 1回だけ読み上げ
             normalizeInput: (input) => input.replace(/[,\s]+/g, '')
         },
         postcode: {
             title: "Post Code Dictation",
-            desc: "A UK Post Code will be announced and spelled out.<br>Type the correct post code! (5 Questions)",
+            desc: "A UK Post Code will be announced.<br>Type the correct post code! (5 Questions)",
             placeholder: "e.g. SW1A 1AA",
             note: "* Include the space in the middle",
             generate: () => {
                 let pc = postcodes[Math.floor(Math.random() * postcodes.length)];
                 return { display: pc, answer: pc.toLowerCase() };
             },
-            getAudioText: (q) => {
-                // 郵便番号の文字と数字を1文字ずつスペルアウトする (例: S, W, 1, A, 1, A, A)
-                const spelled = q.display.replace(/\s+/g, '').toUpperCase().split('').join(', ');
-                return `, , , , ${q.display}. , , , ${spelled}`;
-            },
+            getAudioText: (q) => `, , , , ${q.display}`, // 郵便番号はそのまま1回読み上げ
             normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
         },
         phone: {
             title: "Phone Number Dictation",
-            desc: "A UK phone number will be announced digit by digit.<br>Type the correct number! (5 Questions)",
+            desc: "A UK phone number will be announced.<br>Type the correct number! (5 Questions)",
             placeholder: "e.g. 07700 900077",
             note: "* Spaces in numbers are optional",
             generate: () => {
                 let ph = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
                 return { display: ph, answer: ph };
             },
-            getAudioText: (q) => {
-                // 巨大な数字読みを防ぐため、1桁ずつスペースを空けて読ませる
-                const spacedDigits = q.display.replace(/\s+/g, '').split('').join(' ');
-                return `, , , , ${q.display}. , , , ${spacedDigits}`;
-            },
+            getAudioText: (q) => `, , , , ${q.display}`, // 電話番号はそのまま1回読み上げ
             normalizeInput: (input) => input.replace(/[\s]+/g, '')
         },
         address: {
@@ -163,9 +156,8 @@
                 return { display: full, answer: full.toLowerCase() };
             },
             getAudioText: (q) => {
-                // 住所を読んだ後、ストリート名だけをスペルアウトする (IELTSの王道形式)
+                // 全体＋ストリート名のスペルアウト（本番仕様）
                 const parts = q.display.split(' ');
-                const num = parts[0];
                 const streetWords = parts.slice(1).join(' ');
                 const spelledStreet = streetWords.toUpperCase().split('').join(', ');
                 return `, , , , ${q.display}. , , , ${spelledStreet}`;
@@ -237,7 +229,7 @@
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel(); 
             
-            const textToSpeak = modes[currentMode].getAudioTest ? modes[currentMode].getAudioTest(currentQObj) : modes[currentMode].getAudioText(currentQObj);
+            const textToSpeak = modes[currentMode].getAudioText(currentQObj);
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = 'en-GB'; 
