@@ -136,10 +136,16 @@ let currentQObj = null;
 
 // --- Functions ---
 function switchTab(mode) {
+    if (!mode || !modes[mode]) {
+        console.warn('Unknown mode requested:', mode);
+        return;
+    }
+
     currentMode = mode;
     
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`tab-${mode}`).classList.add('active');
+    const tab = document.getElementById(`tab-${mode}`);
+    if (tab) tab.classList.add('active');
     
     const m = modes[mode];
     document.getElementById("mode-title").innerText = m.title;
@@ -153,6 +159,11 @@ function switchTab(mode) {
 }
 
 function startGame() {
+    if (!modes[currentMode]) {
+        console.warn('No valid mode selected for startGame:', currentMode);
+        return;
+    }
+
     score = 0;
     currentQuestionIndex = 0;
     questions = [];
