@@ -106,6 +106,23 @@ const modes = {
             return `, , , , ${q.display}. , , , ${spelledStreet}`;
         },
         normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
+    },
+    mix: {
+        title: "Mix Dictation",
+        desc: "A random question will be picked from all categories.<br>Type the correct answer! (10 Questions)",
+        placeholder: "Type the answer",
+        note: "* A random mix of Name, Number, Post Code, Phone, and Address",
+        generate: () => {
+            const categoryKeys = Object.keys(modes).filter(key => key !== 'mix');
+            const selectedMode = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
+            const generated = modes[selectedMode].generate();
+            return { ...generated, mode: selectedMode };
+        },
+        getAudioText: (q) => {
+            const selectedMode = q && q.mode ? q.mode : currentMode;
+            return modes[selectedMode] ? modes[selectedMode].getAudioText(q) : '';
+        },
+        normalizeInput: (input) => input.trim()
     }
 };
 
@@ -156,9 +173,10 @@ function loadQuestion() {
     document.getElementById("progress-text").innerText = `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
     
     const inputEl = document.getElementById("answer-input");
+    const activeMode = currentQObj && currentQObj.mode ? currentQObj.mode : currentMode;
     inputEl.value = "";
     inputEl.disabled = false;
-    inputEl.style.textTransform = (currentMode === 'name' || currentMode === 'address') ? "capitalize" : "none";
+    inputEl.style.textTransform = (activeMode === 'name' || activeMode === 'address') ? "capitalize" : "none";
     
     document.getElementById("feedback-text").innerText = "";
     document.getElementById("submit-btn").classList.remove("hidden");
@@ -198,7 +216,9 @@ function playAudio() {
         return;
     }
 
-    if (!currentQObj || !modes[currentMode]) {
+    const activeMode = currentQObj && currentQObj.mode ? currentQObj.mode : currentMode;
+
+    if (!currentQObj || !modes[activeMode]) {
         return;
     }
 
@@ -218,7 +238,7 @@ function playAudio() {
 
     window.speechSynthesis.cancel(); 
     
-    const textToSpeak = modes[currentMode].getAudioText(currentQObj);
+    const textToSpeak = modes[activeMode].getAudioText(currentQObj);
     
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = 'en-GB';
@@ -244,10 +264,9 @@ function checkAnswer() {
     let input = document.getElementById("answer-input").value.trim();
     if (input === "") return; 
 
-    const normalizedInput = modes[currentMode].normalizeInput(input);
-    const correctAnswer = currentMode === 'postcode'
-        ? modes[currentMode].normalizeInput(currentQObj.answer)
-        : currentQObj.answer;
+    const activeMode = currentQObj && currentQObj.mode ? currentQObj.mode : currentMode;
+    const normalizedInput = modes[activeMode].normalizeInput(input);
+    const correctAnswer = modes[activeMode].normalizeInput(currentQObj.answer);
     
     const feedback = document.getElementById("feedback-text");
 
