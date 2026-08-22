@@ -6,17 +6,18 @@
 <title>Name Spelling Test</title>
 <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; text-align: center; padding: 20px; }
-    .container { max-width: 400px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .container { max-width: 450px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     h1 { font-size: 24px; margin-bottom: 20px; color: #1a365d; }
     button { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; background: #3182ce; color: white; border: none; border-radius: 6px; margin: 10px 5px; transition: 0.2s; }
     button:hover { background: #2b6cb0; }
-    input[type="text"] { padding: 12px; font-size: 18px; width: 80%; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 6px; text-transform: capitalize; text-align: center; }
+    input[type="text"] { padding: 12px; font-size: 18px; width: 85%; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 6px; text-transform: capitalize; text-align: center; }
     input[type="text"]:focus { outline: none; border-color: #3182ce; }
     .hidden { display: none; }
     .feedback { font-size: 18px; font-weight: bold; margin: 15px 0; min-height: 27px; }
     .correct { color: #38a169; }
     .incorrect { color: #e53e3e; }
     .progress { font-size: 14px; color: #718096; margin-bottom: 15px; }
+    .note { font-size: 12px; color: #718096; margin-top: 5px; }
 </style>
 </head>
 <body>
@@ -26,7 +27,7 @@
     
     <!-- Start Screen -->
     <div id="start-screen">
-        <p>A random name will be spelled out.<br>Type the correct spelling! (5 Questions)</p>
+        <p>A random full name will be announced and spelled out.<br>Type the correct spelling! (5 Questions)</p>
         <button onclick="startGame()">Start</button>
     </div>
 
@@ -35,7 +36,8 @@
         <div class="progress" id="progress-text">Question 1 / 5</div>
         <button onclick="playAudio()">🔊 Listen Again</button>
         <br>
-        <input type="text" id="answer-input" placeholder="Name..." onkeypress="handleEnter(event)">
+        <input type="text" id="answer-input" placeholder="First Last" onkeypress="handleEnter(event)">
+        <div class="note">* Include a space between first and last name</div>
         <br>
         <button id="submit-btn" onclick="checkAnswer()">Check Answer</button>
         <button id="next-btn" class="hidden" onclick="nextQuestion()">Next Question</button>
@@ -51,12 +53,18 @@
 </div>
 
 <script>
-    const nameList = [
+    // List of common names
+    const firstNames = [
+        "James", "Mary", "John", "Patricia", "Robert", 
+        "Jennifer", "Michael", "Linda", "William", "Elizabeth", 
+        "David", "Barbara", "Richard", "Susan", "Joseph", 
+        "Jessica", "Thomas", "Sarah", "Charles", "Karen"
+    ];
+    const lastNames = [
         "Smith", "Johnson", "Williams", "Brown", "Jones", 
         "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
         "Anderson", "Taylor", "Thomas", "Moore", "Jackson",
-        "Martin", "Lee", "Thompson", "White", "Harris",
-        "Clark", "Lewis", "Robinson", "Walker", "Young"
+        "Martin", "Lee", "Thompson", "White", "Harris"
     ];
 
     const totalQuestions = 5;
@@ -68,7 +76,14 @@
     function startGame() {
         score = 0;
         currentQuestionIndex = 0;
-        questions = [...nameList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+        questions = [];
+        
+        // Generate 5 random full names
+        for(let i = 0; i < totalQuestions; i++) {
+            let f = firstNames[Math.floor(Math.random() * firstNames.length)];
+            let l = lastNames[Math.floor(Math.random() * lastNames.length)];
+            questions.push(`${f} ${l}`);
+        }
         
         document.getElementById("start-screen").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
@@ -93,10 +108,20 @@
     function playAudio() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel(); 
-            const spelledOut = currentName.split('').join('. '); 
-            const utterance = new SpeechSynthesisUtterance(spelledOut);
-            utterance.lang = 'en-GB'; // Changed to British English
-            utterance.rate = 0.7; 
+
+            const nameParts = currentName.split(' ');
+            
+            // Uppercase and comma separated to force alphabet pronunciation (fixes "CI" bug)
+            const spelledFirst = nameParts[0].toUpperCase().split('').join(', ');
+            const spelledLast = nameParts[1].toUpperCase().split('').join(', ');
+            
+            // Add commas at the very beginning to create a brief silence, preventing the first letter from being cut off by OS/Bluetooth lag
+            const textToSpeak = `, , , , ${currentName}. , , , ${spelledFirst}, , , , ${spelledLast}`;
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'en-GB'; // British English for IELTS
+            utterance.rate = 1.0;     // Normal speed
+            
             window.speechSynthesis.speak(utterance);
         } else {
             alert("Your browser does not support text-to-speech.");
@@ -124,7 +149,8 @@
         document.getElementById("submit-btn").classList.add("hidden");
         document.getElementById("next-btn").classList.remove("hidden");
 
-        if (input === correctAnswer) {
+        // Normalize multiple spaces for comparison
+        if (input.replace(/\s+/g, ' ') === correctAnswer) {
             feedback.innerText = "⭕ Correct!";
             feedback.className = "feedback correct";
             score++;
