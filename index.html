@@ -3,44 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Name Spelling Test</title>
+<title>IELTS Listening Practice</title>
 <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; text-align: center; padding: 20px; }
-    .container { max-width: 450px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    h1 { font-size: 24px; margin-bottom: 20px; color: #1a365d; }
-    button { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; background: #3182ce; color: white; border: none; border-radius: 6px; margin: 10px 5px; transition: 0.2s; }
-    button:hover { background: #2b6cb0; }
-    input[type="text"] { padding: 12px; font-size: 18px; width: 85%; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 6px; text-transform: capitalize; text-align: center; }
+    .container { max-width: 520px; margin: 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    
+    /* Tabs Styling (Scrollable for mobile) */
+    .tabs { display: flex; overflow-x: auto; justify-content: flex-start; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    .tab-btn { background: none; border: none; padding: 10px 15px; font-size: 15px; font-weight: bold; color: #718096; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
+    .tab-btn:hover { color: #3182ce; }
+    .tab-btn.active { color: #3182ce; border-bottom: 3px solid #3182ce; margin-bottom: -2px; }
+
+    h1 { font-size: 22px; margin-bottom: 10px; color: #1a365d; }
+    button.action-btn { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; background: #3182ce; color: white; border: none; border-radius: 6px; margin: 10px 5px; transition: 0.2s; }
+    button.action-btn:hover { background: #2b6cb0; }
+    input[type="text"] { padding: 12px; font-size: 18px; width: 85%; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 6px; text-align: center; }
     input[type="text"]:focus { outline: none; border-color: #3182ce; }
     .hidden { display: none; }
     .feedback { font-size: 18px; font-weight: bold; margin: 15px 0; min-height: 27px; }
     .correct { color: #38a169; }
     .incorrect { color: #e53e3e; }
     .progress { font-size: 14px; color: #718096; margin-bottom: 15px; }
-    .note { font-size: 12px; color: #718096; margin-top: 5px; }
+    .note { font-size: 12px; color: #718096; margin-top: 5px; min-height: 18px;}
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Name Spelling Test</h1>
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('name')" id="tab-name">Name</button>
+        <button class="tab-btn" onclick="switchTab('number')" id="tab-number">Number</button>
+        <button class="tab-btn" onclick="switchTab('postcode')" id="tab-postcode">Post Code</button>
+        <button class="tab-btn" onclick="switchTab('phone')" id="tab-phone">Phone</button>
+        <button class="tab-btn" onclick="switchTab('address')" id="tab-address">Address</button>
+    </div>
+
+    <h1 id="mode-title">Name Spelling Test</h1>
     
     <!-- Start Screen -->
     <div id="start-screen">
-        <p>A random full name will be announced and spelled out.<br>Type the correct spelling! (5 Questions)</p>
-        <button onclick="startGame()">Start</button>
+        <p id="mode-desc">A random full name will be announced and spelled out.<br>Type the correct spelling! (5 Questions)</p>
+        <button class="action-btn" onclick="startGame()">Start</button>
     </div>
 
     <!-- Play Screen -->
     <div id="play-screen" class="hidden">
         <div class="progress" id="progress-text">Question 1 / 5</div>
-        <button onclick="playAudio()">🔊 Listen Again</button>
+        <button class="action-btn" onclick="playAudio()">🔊 Listen Again</button>
         <br>
-        <input type="text" id="answer-input" placeholder="First Last" onkeypress="handleEnter(event)">
-        <div class="note">* Include a space between first and last name</div>
+        <input type="text" id="answer-input" onkeypress="handleEnter(event)">
+        <div class="note" id="mode-note">* Include a space between first and last name</div>
         <br>
-        <button id="submit-btn" onclick="checkAnswer()">Check Answer</button>
-        <button id="next-btn" class="hidden" onclick="nextQuestion()">Next Question</button>
+        <button class="action-btn" id="submit-btn" onclick="checkAnswer()">Check Answer</button>
+        <button class="action-btn hidden" id="next-btn" onclick="nextQuestion()">Next Question</button>
         <div id="feedback-text" class="feedback"></div>
     </div>
 
@@ -48,41 +64,149 @@
     <div id="result-screen" class="hidden">
         <h2>Results</h2>
         <p id="score-text" style="font-size: 24px; font-weight: bold;"></p>
-        <button onclick="startGame()">Play Again</button>
+        <button class="action-btn" onclick="startGame()">Play Again</button>
     </div>
 </div>
 
 <script>
-    // List of common names
-    const firstNames = [
-        "James", "Mary", "John", "Patricia", "Robert", 
-        "Jennifer", "Michael", "Linda", "William", "Elizabeth", 
-        "David", "Barbara", "Richard", "Susan", "Joseph", 
-        "Jessica", "Thomas", "Sarah", "Charles", "Karen"
-    ];
-    const lastNames = [
-        "Smith", "Johnson", "Williams", "Brown", "Jones", 
-        "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
-        "Anderson", "Taylor", "Thomas", "Moore", "Jackson",
-        "Martin", "Lee", "Thompson", "White", "Harris"
+    // --- Data Sources ---
+    const firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth", "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah", "Charles", "Karen"];
+    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Anderson", "Taylor", "Thomas", "Moore", "Jackson", "Martin", "Lee", "Thompson", "White", "Harris"];
+    
+    const postcodes = ["SW1A 1AA", "M1 1AE", "B23 4XY", "CR0 2YR", "EH1 1YZ", "CF10 1BH", "G1 1XQ", "BT1 5GS", "LS1 4DY", "NW1 6XE"];
+    
+    const phoneNumbers = ["07700 900077", "020 7946 0990", "0161 496 0192", "0191 498 0123", "07009 800555", "0113 496 0777"];
+    
+    const addresses = [
+        { num: "15", street: "Sparrow Lane" },
+        { num: "42", street: "Acacia Avenue" },
+        { num: "7", street: "Victoria Road" },
+        { num: "10", street: "Downing Street" },
+        { num: "88", street: "High Street" },
+        { num: "3", street: "Church Lane" },
+        { num: "124", street: "Station Road" },
+        { num: "56", street: "Park Avenue" }
     ];
 
+    // --- Application Modes ---
+    const modes = {
+        name: {
+            title: "Name Spelling Test",
+            desc: "A random full name will be announced and spelled out.<br>Type the correct spelling! (5 Questions)",
+            placeholder: "First Last",
+            note: "* Include a space between first and last name",
+            generate: () => {
+                let f = firstNames[Math.floor(Math.random() * firstNames.length)];
+                let l = lastNames[Math.floor(Math.random() * lastNames.length)];
+                return { display: `${f} ${l}`, answer: `${f} ${l}`.toLowerCase() };
+            },
+            getAudioText: (q) => {
+                const parts = q.display.split(' ');
+                const spelledFirst = parts[0].toUpperCase().split('').join(', ');
+                const spelledLast = parts[1].toUpperCase().split('').join(', ');
+                return `, , , , ${q.display}. , , , ${spelledFirst}, , , , ${spelledLast}`;
+            },
+            normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
+        },
+        number: {
+            title: "Number Dictation",
+            desc: "A random number (10 - 999,999) will be announced.<br>Type the exact number! (5 Questions)",
+            placeholder: "e.g. 12345",
+            note: "* Commas are optional (1234 or 1,234)",
+            generate: () => {
+                const num = Math.floor(Math.random() * 999990) + 10;
+                return { display: num.toString(), answer: num.toString() };
+            },
+            getAudioText: (q) => `, , , , ${q.display}`,
+            normalizeInput: (input) => input.replace(/[,\s]+/g, '')
+        },
+        postcode: {
+            title: "Post Code Dictation",
+            desc: "A UK Post Code will be announced and spelled out.<br>Type the correct post code! (5 Questions)",
+            placeholder: "e.g. SW1A 1AA",
+            note: "* Include the space in the middle",
+            generate: () => {
+                let pc = postcodes[Math.floor(Math.random() * postcodes.length)];
+                return { display: pc, answer: pc.toLowerCase() };
+            },
+            getAudioText: (q) => {
+                // 郵便番号の文字と数字を1文字ずつスペルアウトする (例: S, W, 1, A, 1, A, A)
+                const spelled = q.display.replace(/\s+/g, '').toUpperCase().split('').join(', ');
+                return `, , , , ${q.display}. , , , ${spelled}`;
+            },
+            normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
+        },
+        phone: {
+            title: "Phone Number Dictation",
+            desc: "A UK phone number will be announced digit by digit.<br>Type the correct number! (5 Questions)",
+            placeholder: "e.g. 07700 900077",
+            note: "* Spaces in numbers are optional",
+            generate: () => {
+                let ph = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+                return { display: ph, answer: ph };
+            },
+            getAudioText: (q) => {
+                // 巨大な数字読みを防ぐため、1桁ずつスペースを空けて読ませる
+                const spacedDigits = q.display.replace(/\s+/g, '').split('').join(' ');
+                return `, , , , ${q.display}. , , , ${spacedDigits}`;
+            },
+            normalizeInput: (input) => input.replace(/[\s]+/g, '')
+        },
+        address: {
+            title: "Address & Street Name Dictation",
+            desc: "A street address will be announced and the street name spelled out.<br>Type the full address! (5 Questions)",
+            placeholder: "e.g. 15 Sparrow Lane",
+            note: "* e.g. Number followed by street name",
+            generate: () => {
+                let addr = addresses[Math.floor(Math.random() * addresses.length)];
+                let full = `${addr.num} ${addr.street}`;
+                return { display: full, answer: full.toLowerCase() };
+            },
+            getAudioText: (q) => {
+                // 住所を読んだ後、ストリート名だけをスペルアウトする (IELTSの王道形式)
+                const parts = q.display.split(' ');
+                const num = parts[0];
+                const streetWords = parts.slice(1).join(' ');
+                const spelledStreet = streetWords.toUpperCase().split('').join(', ');
+                return `, , , , ${q.display}. , , , ${spelledStreet}`;
+            },
+            normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
+        }
+    };
+
+    // --- State ---
     const totalQuestions = 5;
+    let currentMode = 'name';
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
-    let currentName = "";
+    let currentQObj = null;
+
+    // --- Functions ---
+    function switchTab(mode) {
+        currentMode = mode;
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`tab-${mode}`).classList.add('active');
+        
+        const m = modes[mode];
+        document.getElementById("mode-title").innerText = m.title;
+        document.getElementById("mode-desc").innerHTML = m.desc;
+        document.getElementById("answer-input").placeholder = m.placeholder;
+        document.getElementById("mode-note").innerText = m.note;
+        
+        document.getElementById("start-screen").classList.remove("hidden");
+        document.getElementById("play-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.add("hidden");
+    }
 
     function startGame() {
         score = 0;
         currentQuestionIndex = 0;
         questions = [];
         
-        // Generate 5 random full names
         for(let i = 0; i < totalQuestions; i++) {
-            let f = firstNames[Math.floor(Math.random() * firstNames.length)];
-            let l = lastNames[Math.floor(Math.random() * lastNames.length)];
-            questions.push(`${f} ${l}`);
+            questions.push(modes[currentMode].generate());
         }
         
         document.getElementById("start-screen").classList.add("hidden");
@@ -93,14 +217,18 @@
     }
 
     function loadQuestion() {
-        currentName = questions[currentQuestionIndex];
+        currentQObj = questions[currentQuestionIndex];
         document.getElementById("progress-text").innerText = `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
-        document.getElementById("answer-input").value = "";
-        document.getElementById("answer-input").disabled = false;
+        
+        const inputEl = document.getElementById("answer-input");
+        inputEl.value = "";
+        inputEl.disabled = false;
+        inputEl.style.textTransform = (currentMode === 'name' || currentMode === 'address') ? "capitalize" : "none";
+        
         document.getElementById("feedback-text").innerText = "";
         document.getElementById("submit-btn").classList.remove("hidden");
         document.getElementById("next-btn").classList.add("hidden");
-        document.getElementById("answer-input").focus();
+        inputEl.focus();
         
         setTimeout(playAudio, 500);
     }
@@ -108,19 +236,12 @@
     function playAudio() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel(); 
-
-            const nameParts = currentName.split(' ');
             
-            // Uppercase and comma separated to force alphabet pronunciation (fixes "CI" bug)
-            const spelledFirst = nameParts[0].toUpperCase().split('').join(', ');
-            const spelledLast = nameParts[1].toUpperCase().split('').join(', ');
-            
-            // Add commas at the very beginning to create a brief silence, preventing the first letter from being cut off by OS/Bluetooth lag
-            const textToSpeak = `, , , , ${currentName}. , , , ${spelledFirst}, , , , ${spelledLast}`;
+            const textToSpeak = modes[currentMode].getAudioTest ? modes[currentMode].getAudioTest(currentQObj) : modes[currentMode].getAudioText(currentQObj);
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'en-GB'; // British English for IELTS
-            utterance.rate = 1.0;     // Normal speed
+            utterance.lang = 'en-GB'; 
+            utterance.rate = 1.0; 
             
             window.speechSynthesis.speak(utterance);
         } else {
@@ -139,23 +260,24 @@
     }
 
     function checkAnswer() {
-        const input = document.getElementById("answer-input").value.trim().toLowerCase();
-        const correctAnswer = currentName.toLowerCase();
-        const feedback = document.getElementById("feedback-text");
-
+        let input = document.getElementById("answer-input").value.trim();
         if (input === "") return; 
+
+        const normalizedInput = modes[currentMode].normalizeInput(input);
+        const correctAnswer = currentQObj.answer;
+        
+        const feedback = document.getElementById("feedback-text");
 
         document.getElementById("answer-input").disabled = true;
         document.getElementById("submit-btn").classList.add("hidden");
         document.getElementById("next-btn").classList.remove("hidden");
 
-        // Normalize multiple spaces for comparison
-        if (input.replace(/\s+/g, ' ') === correctAnswer) {
+        if (normalizedInput === correctAnswer) {
             feedback.innerText = "⭕ Correct!";
             feedback.className = "feedback correct";
             score++;
         } else {
-            feedback.innerText = `❌ Incorrect! The answer is ${currentName}`;
+            feedback.innerText = `❌ Incorrect! The answer is ${currentQObj.display}`;
             feedback.className = "feedback incorrect";
         }
     }
@@ -174,6 +296,8 @@
         document.getElementById("result-screen").classList.remove("hidden");
         document.getElementById("score-text").innerText = `${score} / ${totalQuestions}`;
     }
+    
+    switchTab('name');
 </script>
 </body>
 </html>
