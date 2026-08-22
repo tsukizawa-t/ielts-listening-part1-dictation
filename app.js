@@ -163,42 +163,47 @@ function getBritishVoice() {
 }
 
 function playAudio() {
-    if ('speechSynthesis' in window) {
-        const voices = window.speechSynthesis.getVoices();
-        const englishVoice = getBritishVoice();
-
-        if (!voices.length || !englishVoice) {
-            const feedback = document.getElementById("feedback-text");
-            if (feedback) {
-                feedback.innerText = "⚠️ No English voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.";
-                feedback.className = "feedback incorrect";
-            } else {
-                alert("No English TTS voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.");
-            }
-            return;
-        }
-
-        window.speechSynthesis.cancel(); 
-        
-        const textToSpeak = modes[currentMode].getAudioText(currentQObj);
-        
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'en-GB';
-        const britishVoice = getBritishVoice();
-        if (britishVoice) {
-            utterance.voice = britishVoice;
-        }
-        
-        const speedInput = document.getElementById("speed-range");
-        const selectedSpeed = speedInput ? speedInput.value : "1.5";
-        utterance.rate = parseFloat(selectedSpeed);
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-        
-        window.speechSynthesis.speak(utterance);
-    } else {
+    if (!('speechSynthesis' in window)) {
         alert("Your browser does not support text-to-speech.");
+        return;
     }
+
+    if (!currentQObj || !modes[currentMode]) {
+        return;
+    }
+
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoice = getBritishVoice();
+
+    if (!voices.length || !englishVoice) {
+        const feedback = document.getElementById("feedback-text");
+        if (feedback) {
+            feedback.innerText = "⚠️ No English voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.";
+            feedback.className = "feedback incorrect";
+        } else {
+            alert("No English TTS voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.");
+        }
+        return;
+    }
+
+    window.speechSynthesis.cancel(); 
+    
+    const textToSpeak = modes[currentMode].getAudioText(currentQObj);
+    
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = 'en-GB';
+    const britishVoice = getBritishVoice();
+    if (britishVoice) {
+        utterance.voice = britishVoice;
+    }
+    
+    const speedInput = document.getElementById("speed-range");
+    const selectedSpeed = speedInput && speedInput.value ? speedInput.value : "1.5";
+    utterance.rate = parseFloat(selectedSpeed);
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+    
+    window.speechSynthesis.speak(utterance);
 }
 
 function handleEnter(event) {
