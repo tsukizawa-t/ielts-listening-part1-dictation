@@ -27,7 +27,37 @@ const modes = {
             const num = Math.floor(Math.random() * 999990) + 10;
             return { display: num.toString(), answer: num.toString() };
         },
-        getAudioText: (q) => `, , , , ${q.display}`,
+        getAudioText: (q) => {
+            const n = Number(q.display);
+            const ones = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+            const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+            function sayNumber(num) {
+                if (num < 10) return ones[num];
+                if (num < 20) return teens[num - 10];
+                if (num < 100) {
+                    const t = Math.floor(num / 10);
+                    const u = num % 10;
+                    return u === 0 ? tens[t] : `${tens[t]} ${ones[u]}`;
+                }
+                if (num < 1000) {
+                    const h = Math.floor(num / 100);
+                    const rem = num % 100;
+                    if (rem === 0) return `${ones[h]} hundred`;
+                    return `${ones[h]} hundred ${sayNumber(rem)}`;
+                }
+                if (num < 1000000) {
+                    const th = Math.floor(num / 1000);
+                    const rem = num % 1000;
+                    if (rem === 0) return `${sayNumber(th)} thousand`;
+                    return `${sayNumber(th)} thousand ${sayNumber(rem)}`;
+                }
+                return String(num);
+            }
+
+            return `, , , , ${sayNumber(n)}`;
+        },
         normalizeInput: (input) => input.replace(/[,\s]+/g, '')
     },
     postcode: {
