@@ -1,0 +1,144 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 520px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Tabs Styling (Scrollable for mobile) */
+.tabs {
+    display: flex;
+    overflow-x: auto;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #718096;
+    cursor: pointer;
+    transition: 0.3s;
+    flex-shrink: 0;
+}
+
+.tab-btn:hover {
+    color: #3182ce;
+}
+
+.tab-btn.active {
+    color: #3182ce;
+    border-bottom: 3px solid #3182ce;
+    margin-bottom: -2px;
+}
+
+h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #1a365d;
+}
+
+button.action-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin: 10px 5px;
+    transition: 0.2s;
+}
+
+button.action-btn:hover {
+    background: #2b6cb0;
+}
+
+/* Speed Control Styling */
+.audio-control-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.speed-select {
+    padding: 10px;
+    font-size: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+}
+
+.speed-select:focus {
+    outline: none;
+    border-color: #3182ce;
+}
+
+input[type="text"] {
+    padding: 12px;
+    font-size: 18px;
+    width: 85%;
+    margin: 15px 0;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    text-align: center;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #3182ce;
+}
+
+.hidden {
+    display: none;
+}
+
+.feedback {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 15px 0;
+    min-height: 27px;
+}
+
+.correct {
+    color: #38a169;
+}
+
+.incorrect {
+    color: #e53e3e;
+}
+
+.progress {
+    font-size: 14px;
+    color: #718096;
+    margin-bottom: 15px;
+}
+
+.note {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 5px;
+    min-height: 18px;
+}
