@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Name Spelling Test</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; text-align: center; padding: 20px; }
+    .container { max-width: 400px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { font-size: 24px; margin-bottom: 20px; color: #1a365d; }
+    button { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; background: #3182ce; color: white; border: none; border-radius: 6px; margin: 10px 5px; transition: 0.2s; }
+    button:hover { background: #2b6cb0; }
+    input[type="text"] { padding: 12px; font-size: 18px; width: 80%; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 6px; text-transform: capitalize; text-align: center; }
+    input[type="text"]:focus { outline: none; border-color: #3182ce; }
+    .hidden { display: none; }
+    .feedback { font-size: 18px; font-weight: bold; margin: 15px 0; min-height: 27px; }
+    .correct { color: #38a169; }
+    .incorrect { color: #e53e3e; }
+    .progress { font-size: 14px; color: #718096; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Name Spelling Test</h1>
+    
+    <!-- スタート画面 -->
+    <div id="start-screen">
+        <p>ランダムな人名のスペルが読み上げられます。<br>タイプして正解を当てましょう！（全5問）</p>
+        <button onclick="startGame()">スタート</button>
+    </div>
+
+    <!-- プレイ画面 -->
+    <div id="play-screen" class="hidden">
+        <div class="progress" id="progress-text">Question 1 / 5</div>
+        <button onclick="playAudio()">🔊 もう一度聞く</button>
+        <br>
+        <input type="text" id="answer-input" placeholder="Name..." onkeypress="handleEnter(event)">
+        <br>
+        <button id="submit-btn" onclick="checkAnswer()">判定する</button>
+        <button id="next-btn" class="hidden" onclick="nextQuestion()">次の問題へ</button>
+        <div id="feedback-text" class="feedback"></div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-screen" class="hidden">
+        <h2>結果発表</h2>
+        <p id="score-text" style="font-size: 24px; font-weight: bold;"></p>
+        <button onclick="startGame()">もう一度プレイ</button>
+    </div>
+</div>
+
+<script>
+    // 英語のよくある名前リスト（必要に応じて追加・変更してください）
+    const nameList = [
+        "Smith", "Johnson", "Williams", "Brown", "Jones", 
+        "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
+        "Anderson", "Taylor", "Thomas", "Moore", "Jackson",
+        "Martin", "Lee", "Thompson", "White", "Harris",
+        "Clark", "Lewis", "Robinson", "Walker", "Young"
+    ];
+
+    const totalQuestions = 5;
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let currentName = "";
+
+    function startGame() {
+        // 初期化
+        score = 0;
+        currentQuestionIndex = 0;
+        questions = [...nameList].sort(() => 0.5 - Math.random()).slice(0, totalQuestions); // ランダムに5つ抽出
+        
+        document.getElementById("start-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.add("hidden");
+        document.getElementById("play-screen").classList.remove("hidden");
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        currentName = questions[currentQuestionIndex];
+        document.getElementById("progress-text").innerText = `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
+        document.getElementById("answer-input").value = "";
+        document.getElementById("answer-input").disabled = false;
+        document.getElementById("feedback-text").innerText = "";
+        document.getElementById("submit-btn").classList.remove("hidden");
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("answer-input").focus();
+        
+        // 問題読み上げ
+        setTimeout(playAudio, 500);
+    }
+
+    function playAudio() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // 前の音声をキャンセル
+            // スペルを1文字ずつ区切って読み上げるためにドットを挟む (例: S. M. I. T. H.)
+            const spelledOut = currentName.split('').join('. '); 
+            const utterance = new SpeechSynthesisUtterance(spelledOut);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.7; // 読み上げ速度（1が標準、遅めにするなら数値を下げる）
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("お使いのブラウザは音声読み上げに対応していません。");
+        }
+    }
+
+    function handleEnter(event) {
+        if (event.key === "Enter") {
+            if (!document.getElementById("submit-btn").classList.contains("hidden")) {
+                checkAnswer();
+            } else {
+                nextQuestion();
+            }
+        }
+    }
+
+    function checkAnswer() {
+        const input = document.getElementById("answer-input").value.trim().toLowerCase();
+        const correctAnswer = currentName.toLowerCase();
+        const feedback = document.getElementById("feedback-text");
+
+        if (input === "") return; // 空欄の場合は判定しない
+
+        document.getElementById("answer-input").disabled = true;
+        document.getElementById("submit-btn").classList.add("hidden");
+        document.getElementById("next-btn").classList.remove("hidden");
+
+        if (input === correctAnswer) {
+            feedback.innerText = "⭕ 正解！";
+            feedback.className = "feedback correct";
+            score++;
+        } else {
+            feedback.innerText = `❌ 残念！正解は ${currentName}`;
+            feedback.className = "feedback incorrect";
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < totalQuestions) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("play-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.remove("hidden");
+        document.getElementById("score-text").innerText = `${score} / ${totalQuestions} 点`;
+    }
+</script>
+</body>
+</html>
