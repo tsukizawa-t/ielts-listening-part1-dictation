@@ -14,7 +14,7 @@ const modes = {
             const parts = q.display.split(' ');
             const spelledFirst = parts[0].toUpperCase().split('').join(', ');
             const spelledLast = parts[1].toUpperCase().split('').join(', ');
-            return `, , , , ${q.display}. , , , ${spelledFirst}, , , , ${spelledLast}`;
+            return `, , , , ${parts[0]}. , , , ${spelledFirst}, , , , ${parts[1]}. , , , ${spelledLast}`;
         },
         normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
     },
