@@ -178,7 +178,7 @@ function playAudio() {
     if (!voices.length || !englishVoice) {
         const feedback = document.getElementById("feedback-text");
         if (feedback) {
-            feedback.innerText = "⚠️ No English voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.";
+            feedback.innerText = "";
             feedback.className = "feedback incorrect";
         } else {
             alert("No English TTS voice is installed in this browser. Install English (United Kingdom) in Windows/Chrome to enable IELTS audio.");
