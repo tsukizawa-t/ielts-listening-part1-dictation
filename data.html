@@ -1,0 +1,113 @@
+// --- IELTS Listening Practice Data Sources (~100 items each) ---
+
+const firstNames = [
+    "James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth", 
+    "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah", "Charles", "Karen",
+    "Christopher", "Nancy", "Daniel", "Lisa", "Matthew", "Betty", "Anthony", "Margaret", "Mark", "Sandra",
+    "Donald", "Ashley", "Steven", "Kimberly", "Paul", "Emily", "Andrew", "Donna", "Joshua", "Michelle",
+    "Kenneth", "Carol", "Kevin", "Amanda", "Brian", "Melissa", "George", "Deborah", "Timothy", "Stephanie",
+    "Ronald", "Rebecca", "Edward", "Sharon", "Jason", "Laura", "Jeffrey", "Cynthia", "Ryan", "Kathleen",
+    "Jacob", "Amy", "Gary", "Angela", "Nicholas", "Shirley", "Eric", "Anna", "Jonathan", "Brenda",
+    "Stephen", "Pamela", "Larry", "Emma", "Justin", "Nicole", "Scott", "Helen", "Brandon", "Samantha",
+    "Benjamin", "Katherine", "Samuel", "Christine", "Gregory", "Debra", "Frank", "Rachel", "Alexander", "Catherine",
+    "Patrick", "Carolyn", "Raymond", "Janet", "Jack", "Maria", "Dennis", "Heather", "Jerry", "Diane",
+    "Tyler", "Virginia", "Aaron", "Kaitlyn", "Jose", "Julie", "Adam", "Joyce", "Nathan", "Victoria"
+];
+
+const lastNames = [
+    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", 
+    "Anderson", "Taylor", "Thomas", "Moore", "Jackson", "Martin", "Lee", "Thompson", "White", "Harris",
+    "Clark", "Lewis", "Robinson", "Walker", "Perez", "Hall", "Young", "Allen", "Sanchez", "Wright",
+    "King", "Scott", "Green", "Baker", "Adams", "Nelson", "Hill", "Ramirez", "Campbell", "Mitchell",
+    "Researched", "Roberts", "Carter", "Phillips", "Evans", "Turner", "Torres", "Parker", "Collins", "Edwards",
+    "Stewart", "Flores", "Morris", "Nguyen", "Murphy", "Rivera", "Cook", "Rogers", "Morgan", "Peterson",
+    "Cooper", "Reed", "Bailey", "Bell", "Gomez", "Kelly", "Howard", "Ward", "Cox", "Diaz",
+    "Richardson", "Wood", "Watson", "Brooks", "Bennett", "Gray", "James", "Reyes", "Cruz", "Hughes",
+    "Price", "Myers", "Long", "Foster", "Sanders", "Ross", "Morales", "Powell", "Sullivan", "Russell",
+    "Ortiz", "Jenkins", "Gutierrez", "Perry", "Butler", "Barnes", "Fisher", "Henderson", "Coleman", "Simmons"
+];
+
+const postcodes = [
+    "SW1A 1AA", "M1 1AE", "B23 4XY", "CR0 2YR", "EH1 1YZ", "CF10 1BH", "G1 1XQ", "BT1 5GS", "LS1 4DY", "NW1 6XE",
+    "SE1 7PB", "W1J 7NT", "EC1V 2NX", "OX1 3PA", "CB2 1TN", "E1 6AN", "N1 9GU", "SW4 6BH", "W6 9HJ", "KT2 5JR",
+    "AB10 1XG", "BA1 1UA", "BR1 1SB", "CH1 1LE", "CV1 2SK", "DA1 1BG", "DE1 2HS", "DN1 1DN", "DT1 1XT", "EX1 1JN",
+    "FK1 1JW", "GL1 1UN", "GY1 2QB", "HG1 1JQ", "HP1 1JW", "HR1 2NX", "HS1 2LB", "HU1 2JX", "IV1 1LU", "JE1 1AA",
+    "KA1 1JW", "KW1 4LG", "KY1 1PB", "L1 8JQ", "LE1 1RE", "LL11 1AH", "LN1 1YL", "LU1 2HN", "ME1 1LX", "MK9 3EA",
+    "ML1 1UD", "NE1 1EE", "NG1 1GF", "NN1 2JW", "NP20 1PX", "NR1 1QJ", "OL1 1XT", "PA1 1UG", "PE1 1HJ", "PH1 5BX",
+    "PL1 1DN", "PO1 2ED", "PR1 1YE", "RG1 1AZ", "RH1 1NN", "RM1 1HP", "S1 2HE", "SA1 1LE", "SG1 1XT", "SK1 1HG",
+    "SL1 1XW", "SM1 1EJ", "SN1 1JH", "SO14 0YN", "SP1 2EJ", "SR1 1PP", "SS1 1HN", "ST1 5NP", "SY1 1LH", "TA1 1JW",
+    "TD1 1AH", "TF1 1NQ", "TN1 1UX", "TQ1 1BW", "TR1 2DP", "TS1 1ST", "TW1 3QS", "UB1 1AA", "WA1 1YX", "WD17 1HP",
+    "WF1 1LE", "WN1 1UN", "WR1 1DE", "WS1 1LE", "WV1 1JD", "YO1 7HD", "ZE1 0LS", "DH1 1LE", "CO1 1JN", "LE2 8TQ"
+];
+
+const phoneNumbers = [
+    "07700 900077", "020 7946 0990", "0161 496 0192", "0191 498 0123", "07009 800555", "0113 496 0777",
+    "028 9018 0192", "0131 496 0888", "0121 496 0222", "0151 496 0333", "07890 123456", "07123 456789",
+    "07001 234567", "07002 345678", "07003 456789", "07004 567890", "07005 678901", "07006 789012",
+    "07007 890123", "07008 901234", "0114 496 0111", "0115 496 0222", "0116 496 0333", "0117 496 0444",
+    "0118 496 0555", "01223 496001", "01227 496002", "01242 496003", "01273 496004", "01332 496005",
+    "0141 496 0101", "01522 496006", "01603 496007", "01702 496008", "01865 496009", "01904 496010",
+    "020 8946 0111", "023 8096 0222", "029 2018 0333", "01482 496011", "01206 496012", "01792 496013",
+    "01932 496014", "01452 496015", "01582 496016", "01256 496017", "01634 496018", "01823 496019",
+    "01225 496020", "01782 496021", "01192 496022", "07700 900111", "07700 900222", "07700 900333",
+    "07700 900444", "07700 900555", "07700 900666", "07700 900777", "07700 900888", "07700 900999",
+    "020 7123 4001", "020 7123 4002", "020 7123 4003", "020 7123 4004", "020 7123 4005", "020 7123 4006",
+    "020 7123 4007", "020 7123 4008", "020 7123 4009", "020 7123 4010", "0113 234 5671", "0113 234 5672",
+    "0161 832 9991", "0161 832 9992", "0121 333 4441", "0121 333 4442", "0191 222 3331", "0191 222 3332",
+    "07911 123456", "07911 234567", "07911 345678", "07911 456789", "07911 567890", "07911 678901",
+    "07911 789012", "07911 890123", "07911 901234", "07911 012345", "01202 496023", "01302 496024",
+    "01402 496025", "01502 496026", "01602 496027", "01702 496028", "01802 496029", "01902 496030",
+    "01226 496031", "01333 496032", "01444 496033", "01555 496034"
+];
+
+const addresses = [
+    { num: "15", street: "Sparrow Lane" }, { num: "42", street: "Acacia Avenue" },
+    { num: "7", street: "Victoria Road" }, { num: "10", street: "Downing Street" },
+    { num: "88", street: "High Street" }, { num: "3", street: "Church Lane" },
+    { num: "124", street: "Station Road" }, { num: "56", street: "Park Avenue" },
+    { num: "19", street: "Mill Lane" }, { num: "31", street: "Greenfield Road" },
+    { num: "204", street: "King Street" }, { num: "9", street: "Orchard Close" },
+    { num: "65", street: "Queen Street" }, { num: "12", street: "Rosemary Gardens" },
+    { num: "78", street: "Castle Street" }, { num: "45", street: "River View" },
+    { num: "22", street: "Baker Street" }, { num: "14", street: "Oxford Road" },
+    { num: "102", street: "Cambridge Road" }, { num: "5", street: "Church Street" },
+    { num: "67", street: "Manor Road" }, { num: "8", street: "School Lane" },
+    { num: "33", street: "Grange Road" }, { num: "90", street: "London Road" },
+    { num: "11", street: "New Road" }, { num: "73", street: "West Street" },
+    { num: "2", street: "East Street" }, { num: "48", street: "North Street" },
+    { num: "19", street: "South Street" }, { num: "25", street: "Station Close" },
+    { num: "50", street: "The Green" }, { num: "4", street: "The Avenue" },
+    { num: "16", street: "Meadow Way" }, { num: "81", street: "Woodland View" },
+    { num: "29", street: "Broadway" }, { num: "6", street: "Abbey Road" },
+    { num: "39", street: "Queen's Road" }, { num: "52", street: "King's Road" },
+    { num: "18", street: "Prince's Street" }, { num: "94", street: "Victoria Street" },
+    { num: "21", street: "Albert Road" }, { num: "44", street: "Edward Road" },
+    { num: "13", street: "George Street" }, { num: "60", street: "Richmond Road" },
+    { num: "35", street: "Windsor Road" }, { num: "77", street: "Balmoral Drive" },
+    { num: "1", street: "Sandringham Close" }, { num: "27", street: "Kensington Road" },
+    { num: "83", street: "Chelsea Way" }, { num: "49", street: "Wembley Close" },
+    { num: "110", street: "York Road" }, { num: "30", street: "Lancaster Road" },
+    { num: "23", street: "Cumberland Road" }, { num: "66", street: "Devonshire Road" },
+    { num: "17", street: "Cornwall Road" }, { num: "55", street: "Somerset Road" },
+    { num: "38", street: "Surrey Street" }, { num: "85", street: "Kent Road" },
+    { num: "20", street: "Sussex Road" }, { num: "72", street: "Hampshire Road" },
+    { num: "10", street: "Dorset Way" }, { num: "41", street: "Wiltshire Close" },
+    { num: "99", street: "Gloucester Road" }, { num: "15", street: "Worcester Road" },
+    { num: "62", street: "Hereford Street" }, { num: "34", street: "Shrewsbury Road" },
+    { num: "28", street: "Chester Road" }, { num: "51", street: "Durham Road" },
+    { num: "76", street: "Lincoln Road" }, { num: "24", street: "Norwich Road" },
+    { num: "89", street: "Ipswich Road" }, { num: "46", street: "Colchester Road" },
+    { num: "12", street: "Bedford Road" }, { num: "37", street: "Luton Road" },
+    { num: "68", street: "Reading Road" }, { num: "19", street: "Slough Road" },
+    { num: "53", street: "Guildford Road" }, { num: "91", street: "Brighton Road" },
+    { num: "40", street: "Dover Road" }, { num: "14", street: "Canterbury Road" },
+    { num: "80", street: "Rochester Way" }, { num: "26", street: "Chatham Road" },
+    { num: "64", street: "Maidstone Road" }, { num: "32", street: "Dartford Road" },
+    { num: "75", street: "Gravesend Road" }, { num: "9", street: "Whitstable Road" },
+    { num: "47", street: "Margate Road" }, { num: "18", street: "Ramsgate Road" },
+    { num: "84", street: "Folkestone Road" }, { num: "22", street: "Ashford Road" },
+    { num: "61", street: "Tonbridge Road" }, { num: "36", street: "Sevenoaks Road" },
+    { num: "70", street: "Bromley Road" }, { num: "11", street: "Croydon Road" },
+    { num: "57", street: "Sutton Lane" }, { num: "95", street: "Kingston Road" },
+    { num: "43", street: "Richmond Hill" }, { num: "87", street: "Twickenham Road" }
+];

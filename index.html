@@ -68,26 +68,10 @@
     </div>
 </div>
 
-<script>
-    // --- Data Sources ---
-    const firstNames = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth", "David", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah", "Charles", "Karen"];
-    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Anderson", "Taylor", "Thomas", "Moore", "Jackson", "Martin", "Lee", "Thompson", "White", "Harris"];
-    
-    const postcodes = ["SW1A 1AA", "M1 1AE", "B23 4XY", "CR0 2YR", "EH1 1YZ", "CF10 1BH", "G1 1XQ", "BT1 5GS", "LS1 4DY", "NW1 6XE"];
-    
-    const phoneNumbers = ["07700 900077", "020 7946 0990", "0161 496 0192", "0191 498 0123", "07009 800555", "0113 496 0777"];
-    
-    const addresses = [
-        { num: "15", street: "Sparrow Lane" },
-        { num: "42", street: "Acacia Avenue" },
-        { num: "7", street: "Victoria Road" },
-        { num: "10", street: "Downing Street" },
-        { num: "88", street: "High Street" },
-        { num: "3", street: "Church Lane" },
-        { num: "124", street: "Station Road" },
-        { num: "56", street: "Park Avenue" }
-    ];
+<!-- 外部データファイルを読み込み -->
+<script src="data.js"></script>
 
+<script>
     // --- Application Modes ---
     const modes = {
         name: {
@@ -101,7 +85,6 @@
                 return { display: `${f} ${l}`, answer: `${f} ${l}`.toLowerCase() };
             },
             getAudioText: (q) => {
-                // 全体＋スペルアウト（本番仕様）
                 const parts = q.display.split(' ');
                 const spelledFirst = parts[0].toUpperCase().split('').join(', ');
                 const spelledLast = parts[1].toUpperCase().split('').join(', ');
@@ -118,7 +101,7 @@
                 const num = Math.floor(Math.random() * 999990) + 10;
                 return { display: num.toString(), answer: num.toString() };
             },
-            getAudioText: (q) => `, , , , ${q.display}`, // 1回だけ読み上げ
+            getAudioText: (q) => `, , , , ${q.display}`,
             normalizeInput: (input) => input.replace(/[,\s]+/g, '')
         },
         postcode: {
@@ -130,7 +113,7 @@
                 let pc = postcodes[Math.floor(Math.random() * postcodes.length)];
                 return { display: pc, answer: pc.toLowerCase() };
             },
-            getAudioText: (q) => `, , , , ${q.display}`, // 郵便番号はそのまま1回読み上げ
+            getAudioText: (q) => `, , , , ${q.display}`,
             normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
         },
         phone: {
@@ -142,7 +125,7 @@
                 let ph = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
                 return { display: ph, answer: ph };
             },
-            getAudioText: (q) => `, , , , ${q.display}`, // 電話番号はそのまま1回読み上げ
+            getAudioText: (q) => `, , , , ${q.display}`,
             normalizeInput: (input) => input.replace(/[\s]+/g, '')
         },
         address: {
@@ -156,7 +139,6 @@
                 return { display: full, answer: full.toLowerCase() };
             },
             getAudioText: (q) => {
-                // 全体＋ストリート名のスペルアウト（本番仕様）
                 const parts = q.display.split(' ');
                 const streetWords = parts.slice(1).join(' ');
                 const spelledStreet = streetWords.toUpperCase().split('').join(', ');
@@ -242,13 +224,7 @@
     }
 
     function handleEnter(event) {
-        if (event.key === "Enter") {
-            if (!document.getElementById("submit-btn").classList.contains("hidden")) {
-                checkAnswer();
-            } else {
-                nextQuestion();
-            }
-        }
+        (event.key === "Enter") && (!document.getElementById("submit-btn").classList.contains("hidden") ? checkAnswer() : nextQuestion());
     }
 
     function checkAnswer() {
