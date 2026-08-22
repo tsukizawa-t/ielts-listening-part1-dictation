@@ -34,14 +34,19 @@ const modes = {
         title: "Post Code Dictation",
         desc: "A UK Post Code will be announced.<br>Type the correct post code! (5 Questions)",
         placeholder: "e.g. SW1A 1AA",
-        note: "* Include the space in the middle",
+        note: "* Space in the middle is optional",
         generate: () => {
             let pc = postcodes[Math.floor(Math.random() * postcodes.length)];
             return { display: pc, answer: pc.toLowerCase() };
         },
-        getAudioText: (q) => `, , , , ${q.display}`,
-        normalizeInput: (input) => input.replace(/\s+/g, ' ').toLowerCase()
-    },
+        getAudioText: (q) => {
+            const spelledOut = q.display.toUpperCase().split('').map(char => {
+                return char === ' ' ? ', , ' : char;
+            }).join(', ');
+            return `, , , , ${spelledOut}`;
+        },
+        normalizeInput: (input) => input.replace(/[\s]+/g, '').toLowerCase()
+        },
     phone: {
         title: "Phone Number Dictation",
         desc: "A UK phone number will be announced.<br>Type the correct number! (5 Questions)",
