@@ -80,7 +80,7 @@ const modes = {
 };
 
 // --- State ---
-const totalQuestions = 5;
+const totalQuestions = 10;
 let currentMode = 'name';
 let questions = [];
 let currentQuestionIndex = 0;
