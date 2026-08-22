@@ -25,7 +25,12 @@ const modes = {
         note: "* Commas are optional (1234 or 1,234)",
         generate: () => {
             const num = Math.floor(Math.random() * 999990) + 10;
-            return { display: num.toString(), answer: num.toString() };
+            const result = { display: num.toString(), answer: num.toString() };
+            const n = Number(result.display);
+            if (n >= 1000 && n % 1000 !== 0) {
+                result.withAnd = Math.random() < 0.5;
+            }
+            return result;
         },
         getAudioText: (q) => {
             const n = Number(q.display);
@@ -33,7 +38,7 @@ const modes = {
             const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
             const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 
-            function sayNumber(num) {
+            function sayNumber(num, includeAnd = false) {
                 if (num < 10) return ones[num];
                 if (num < 20) return teens[num - 10];
                 if (num < 100) {
@@ -51,13 +56,13 @@ const modes = {
                     const th = Math.floor(num / 1000);
                     const rem = num % 1000;
                     if (rem === 0) return `${sayNumber(th)} thousand`;
-                    const useAnd = Math.random() < 0.5;
-                    return `${sayNumber(th)} thousand${useAnd ? ' and ' : ' '}${sayNumber(rem)}`;
+                    return `${sayNumber(th)} thousand${includeAnd ? ' and ' : ' '}${sayNumber(rem)}`;
                 }
                 return String(num);
             }
 
-            return `, , , , ${sayNumber(n)}`;
+            const includeAnd = q && q.withAnd === true;
+            return `, , , , ${sayNumber(n, includeAnd)}`;
         },
         normalizeInput: (input) => input.replace(/[,\s]+/g, '')
     },
